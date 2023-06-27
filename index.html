@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Selección de Asientos</title>
+    <style>
+        #seats-container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 500px;
+        }
+
+        .seat {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            background-color: gray;
+            cursor: pointer;
+        }
+
+        .seat.selected {
+            background-color: green;
+        }
+
+        .seat.reserved {
+            background-color: red;
+            pointer-events: none;
+        }
+
+        #btn-submit,
+        #btn-return {
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Selección de Asientos</h1>
+
+    <div id="login-container">
+        <label for="username">Nombre de usuario:</label>
+        <input type="text" id="username" required>
+        <button id="btn-login">Iniciar sesión</button>
+    </div>
+
+    <div id="seats-container">
+        <!-- Aquí se generarán los asientos dinámicamente -->
+    </div>
+
+    <button id="btn-submit">Reservar</button>
+    <button id="btn-return">Devolver Asientos</button>
+
+    <script>
+        // Datos de los asientos disponibles
+        var availableSeats = [
+            { seatNumber: "A1", isSelected: false, selectedBy: null },
+            { seatNumber: "A2", isSelected: false, selectedBy: null },
+            { seatNumber: "A3", isSelected: false, selectedBy: null },
+            { seatNumber: "B1", isSelected: false, selectedBy: null },
+            { seatNumber: "B2", isSelected: false, selectedBy: null },
+            { seatNumber: "B3", isSelected: false, selectedBy: null },
+            { seatNumber: "C1", isSelected: false, selectedBy: null },
+            { seatNumber: "C2", isSelected: false, selectedBy: null },
+            { seatNumber: "C3", isSelected: false, selectedBy: null }
+        ];
+
+        // Obtener el contenedor de los asientos
+        var seatsContainer = document.getElementById("seats-container");
+
+        // Función para generar los asientos
+        function generateSeats() {
+            seatsContainer.innerHTML = "";
+
+            for (var i = 0; i < availableSeats.length; i++) {
+                var seat = availableSeats[i];
+                var seatElement = document.createElement("div");
+                seatElement.className = "seat";
+                seatElement.textContent = seat.seatNumber;
+
+                // Verificar el estado del asiento
+                if (seat.isSelected) {
+                    seatElement.classList.add("selected");
+
+                    if (seat.selectedBy !== getUsername()) {
+                        seatElement.classList.add("reserved");
+                    }
+                }
+
+                seatElement.addEventListener("click", toggleSeatSelection);
+                seatsContainer.appendChild(seatElement);
+            }
+        }
+
+        // Función para alternar la selección del asiento
+        function toggleSeatSelection() {
+            var seat = availableSeats.find(function (s) {
+                return s.seatNumber === this.textContent;
+            }, this);
+
+            if (seat) {
+                if (!seat.isSelected || seat.selectedBy === getUsername()) {
+                    seat.isSelected = !seat.isSelected;
+                    seat.selectedBy = getUsername();
+                    generateSeats();
+                }
+            }
+        }
+
+        // Función para obtener el nombre de usuario actual
+        function getUsername()
